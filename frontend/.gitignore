@@ -1,0 +1,16 @@
+# Node / frontend
+node_modules/
+frontend/.next/
+frontend/node_modules/
+frontend/.env.local
+
+# Python / backend
+backend/backend/venv/
+backend/backend/__pycache__/
+backend/backend/app/__pycache__/
+backend/backend/.env
+backend/backend/guardstack_log.jsonl
+
+# OS
+.DS_Store
+Thumbs.db
