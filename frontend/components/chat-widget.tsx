@@ -86,7 +86,7 @@ export default function ChatWidget() {
               <p className="chat-error">
                 This assistant runs on a locally-hosted AI model for privacy, so it's offline in this hosted
                 preview. See it working live in the demo video on{' '}
-                <a href="https://github.com/YOUR-USERNAME/YOUR-REPO-NAME" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/sri-jahnavi21/KadambariProject" target="_blank" rel="noopener noreferrer">
                   GitHub
                 </a>
                 .
