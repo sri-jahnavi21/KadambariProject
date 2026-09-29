@@ -10,6 +10,7 @@ backend/backend/__pycache__/
 backend/backend/app/__pycache__/
 backend/backend/.env
 backend/backend/guardstack_log.jsonl
+backend/backend/models/
 
 # OS
 .DS_Store
