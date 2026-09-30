@@ -1,0 +1,66 @@
+(venv) PS C:\Users\HP\OneDrive\Desktop\KadambariProject\backend\backend> dir models\guardstack_toxicity_onnx
+    Directory: C:\Users\HP\OneDrive\Desktop\KadambariProject
+    \backend\backend\models\guardstack_toxicity_onnx
+Mode                 LastWriteTime         Length Name      
+----                 -------------         ------ ----      
+-a---l        29-09-2026     15:06           1055 config.jso
+                                                  n         
+-a---l        29-09-2026     15:06      438224097 guardstack
+                                                  _toxicity.
+                                                  onnx      
+-a---l        29-09-2026     15:06         711659 tokenizer.
+                                                  json      
+-a---l        29-09-2026     15:06            351 tokenizer_
+                                                  config.jso
+                                                  n         
+                                                             
+(venv) PS C:\Users\HP\OneDrive\Desktop\KadambariProject\backend\backend> Copy-Item "$HOME\Downloads\compare_toxicity_modes.py" -Destination .                                          
+(venv) PS C:\Users\HP\OneDrive\Desktop\KadambariProject\backend\backend> Expand-Archive -Path "$HOME\Downloads\guardstack_toxicity_onnx.zip" -DestinationPath "models\guardstack_toxicity_onnx" -Force
+>> dir models\guardstack_toxicity_onnx
+    Directory: C:\Users\HP\OneDrive\Desktop\KadambariProject
+    \backend\backend\models\guardstack_toxicity_onnx
+Mode                 LastWriteTime         Length Name      
+----                 -------------         ------ ----      
+-a----        29-09-2026     15:06           1055 config.jso
+                                                  n         
+-a----        29-09-2026     15:06      438224097 guardstack
+                                                  _toxicity.
+                                                  onnx      
+-a----        29-09-2026     15:06         711659 tokenizer.
+                                                  json      
+-a----        29-09-2026     15:06            351 tokenizer_
+                                                  config.jso
+                                                  n         
+(venv) PS C:\Users\HP\OneDrive\Desktop\KadambariProject\backend\backend> python compare_toxicity_modes.py toxicity_eval_yours.csv
+>> python compare_toxicity_modes.py toxicity_eval.csv
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+================================================================================================
+toxicity modes on toxicity_eval_yours.csv (16 examples)
+mode      TP  FP  TN  FN    prec  recall      F1     FPR     acc   ms/msg
+------------------------------------------------------------------------------------------------
+regex      6   1   5   4    0.86    0.60    0.71    0.17    0.69      0.0
+model     10   0   6   0    1.00    1.00    1.00    0.00    1.00     35.2
+hybrid    10   1   5   0    0.91    1.00    0.95    0.17    0.94     35.2
+================================================================================================
+[model] MISSED toxic messages:
+[model] FALSE ALARMS (harmless text flagged):
+[hybrid] MISSED toxic messages:
+[hybrid] FALSE ALARMS (harmless text flagged):
+   (score 0.24) Do you also sell shoes for lifting dumbbells?
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+================================================================================================
+toxicity modes on toxicity_eval.csv (60 examples)
+mode      TP  FP  TN  FN    prec  recall      F1     FPR     acc   ms/msg
+------------------------------------------------------------------------------------------------
+regex     15   0  30  15    1.00    0.50    0.67    0.00    0.75      0.0
+model     30   1  29   0    0.97    1.00    0.98    0.03    0.98     14.0
+hybrid    30   1  29   0    0.97    1.00    0.98    0.03    0.98     14.0
+===================================
+[model] MISSED toxic messages:
+[model] FALSE ALARMS (harmless text flagged):
+   (score 0.71) That sale price is insane, what a steal!
+[hybrid] MISSED toxic messages:
+[hybrid] FALSE ALARMS (harmless text flagged):
+   (score 0.71) That sale price is insane, what a steal!
+(venv) PS C:\Users\HP\OneDrive\Desktop\KadambariProject\backend\backend> python compare_toxicity_modes.py toxicity_eval_yours.csv
+>> python compare_toxicity_modes.py toxicity_eval.csv
