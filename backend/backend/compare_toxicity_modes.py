@@ -45,7 +45,7 @@ ms = (time.time() - t0) / len(rows) * 1000
 if any(math.isnan(s) for s in scores):
     raise SystemExit("Model scores are NaN. Do NOT use this model file.")
 
-regex_pred = [bool(toxicity.check_toxicity(t)) for t, _ in rows]
+regex_pred = [bool(toxicity.check_toxicity_regex(t)) for t, _ in rows]
 model_pred = [s >= THRESHOLD for s in scores]
 hybrid_pred = [a or b for a, b in zip(regex_pred, model_pred)]
 

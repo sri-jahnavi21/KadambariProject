@@ -18,7 +18,7 @@ with open(path, newline="", encoding="utf-8") as f:
 tp = fp = tn = fn = 0
 missed, false_alarms = [], []
 for text, label in rows:
-    predicted = bool(toxicity.check_toxicity(text))
+    predicted = bool(toxicity.check_toxicity_regex(text))
     if label and predicted:
         tp += 1
     elif label and not predicted:
