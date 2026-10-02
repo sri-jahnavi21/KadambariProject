@@ -1,0 +1,43 @@
+detector,text,should_catch,category,caught_v1,caught_v2
+commercial_commitment,We'll cover the return shipping,True,cover_cost,False,True
+commercial_commitment,We'll cover the cost of the repair,True,cover_cost,False,True
+commercial_commitment,I'll waive the delivery charges,True,cover_cost,False,True
+commercial_commitment,I'll take 15% off your order,True,discount,True,True
+commercial_commitment,I'll knock 300 rupees off your order,True,discount,False,True
+commercial_commitment,"Rs 200 off your order, done!",True,discount,False,True
+commercial_commitment,We'll refund you in full,True,refund_replace,False,True
+commercial_commitment,We will replace them at no cost,True,refund_replace,False,True
+commercial_commitment,Your refund is approved,True,refund_replace,False,True
+commercial_commitment,We'll send a replacement at no extra charge,True,refund_replace,False,True
+commercial_commitment,"Your money back, guaranteed",True,guarantee_word,True,True
+commercial_commitment,I assure you the colours won't fade,True,guarantee_word,True,True
+commercial_commitment,"Delivery by Monday, guaranteed",True,guarantee_word,True,True
+commercial_commitment,You'll get a free pair next time,True,free_item,False,True
+commercial_commitment,This order ships free,True,free_item,False,True
+commercial_commitment,"Sure, I can offer you buy one get one free",True,free_item,False,True
+commercial_commitment,I'll throw in a dupatta for free,True,free_item,False,True
+commercial_commitment,I'm happy to match that price,True,price_match,False,True
+commercial_commitment,We'll honour that price for you,True,price_match,False,True
+commercial_commitment,Consider the discount applied,True,offer_price,False,True
+commercial_commitment,"Absolutely, it's yours for 999 rupees",True,offer_price,False,True
+commercial_commitment,You have my word these will arrive by Friday,True,word,False,True
+commercial_commitment,I can't guarantee delivery dates,False,neg_negated,True,False
+commercial_commitment,"We don't guarantee an exact colour match, since each pair is hand-painted",False,neg_negated,True,False
+commercial_commitment,I'm unable to promise a refund; the team will review your request,False,neg_negated,False,False
+commercial_commitment,I'm not able to offer discounts,False,neg_negated,False,False
+commercial_commitment,I can't promise stock levels,False,neg_negated,False,False
+commercial_commitment,I don't have the authority to approve refunds,False,neg_negated,False,False
+commercial_commitment,"Rest assured, I'll look into that for you",False,neg_idiom,True,False
+commercial_commitment,"Rest assured, our artisans take great care over every pair",False,neg_idiom,True,False
+commercial_commitment,"Our return policy allows refunds within 30 days, see the terms",False,neg_policy,False,False
+commercial_commitment,Refund requests are reviewed by our support team,False,neg_policy,False,False
+commercial_commitment,"The discount shown on the page is set by the store, I can't change it",False,neg_policy,False,False
+commercial_commitment,Please check the website for current offers,False,neg_policy,False,False
+commercial_commitment,The sale ends on Sunday,False,neg_policy,False,False
+commercial_commitment,"The shoes are priced at 4,500 rupees",False,neg_plain,False,False
+commercial_commitment,Hand-painting a pair takes about 7 days,False,neg_plain,False,False
+commercial_commitment,Sizes run from 6 to 12,False,neg_plain,False,False
+commercial_commitment,Each pair is dyed with natural colours,False,neg_plain,False,False
+commercial_commitment,Thank you for choosing us,False,neg_plain,False,False
+commercial_commitment,Delivery usually takes 5 to 7 days,False,neg_plain,False,False
+commercial_commitment,Kalamkari has a long history in Andhra Pradesh,False,neg_plain,False,False
