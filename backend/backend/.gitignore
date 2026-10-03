@@ -2,3 +2,5 @@ models/
 __pycache__/
 *.onnx
 guardstack_log.jsonl
+
+.env
