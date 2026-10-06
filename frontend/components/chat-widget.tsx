@@ -1,8 +1,17 @@
 'use client'
 
-import { Component, type ErrorInfo, type ReactNode, useState } from 'react'
+import { Component, type ErrorInfo, type ReactNode, useEffect, useState } from 'react'
 
 type ChatMessage = { role: 'assistant' | 'user'; content: string }
+
+// Starter questions. They only cover facts the assistant actually knows
+// (products, price, the craft), so they do not invite made-up policies.
+const SUGGESTIONS = [
+  'What shoes do you sell?',
+  'How much do they cost?',
+  'Tell me about Kalamkari art',
+  'Are the shoes hand-painted?',
+]
 
 async function mockSendMessage(message: string, signal: AbortSignal) {
   const apiUrl = process.env.NEXT_PUBLIC_CHAT_API_URL ?? 'http://localhost:8000'
@@ -45,17 +54,15 @@ export default function ChatWidget() {
     { role: 'assistant', content: "Hi, I'm assistant here. What are you curious about?" },
   ])
 
-  if (!enabled) return null
-
-  async function sendMessage() {
-    const trimmed = value.trim()
+  async function sendText(text: string) {
+    const trimmed = text.trim()
     if (!trimmed || sending) return
     setMessages((current) => [...current, { role: 'user', content: trimmed }])
-    setValue('')
     setSending(true)
     setUnavailable(false)
     const controller = new AbortController()
-    const timeout = window.setTimeout(() => controller.abort(), 10000)
+    // Local model replies can take 6-20 seconds, so allow up to 60 seconds.
+    const timeout = window.setTimeout(() => controller.abort(), 60000)
     try {
       const response = await mockSendMessage(trimmed, controller.signal)
       setMessages((current) => [...current, { role: 'assistant', content: response }])
@@ -66,6 +73,28 @@ export default function ChatWidget() {
       setSending(false)
     }
   }
+
+  async function sendMessage() {
+    const trimmed = value.trim()
+    if (!trimmed || sending) return
+    setValue('')
+    await sendText(trimmed)
+  }
+
+  // Lets the "Ask about this shoe" buttons on the page open the chat with a question.
+  useEffect(() => {
+    function handleAsk(event: Event) {
+      const text = (event as CustomEvent<string>).detail
+      if (typeof text === 'string' && text.trim()) {
+        setOpen(true)
+        void sendText(text)
+      }
+    }
+    window.addEventListener('kadambari:ask', handleAsk)
+    return () => window.removeEventListener('kadambari:ask', handleAsk)
+  })
+
+  if (!enabled) return null
 
   return (
     <div className="chat-widget" aria-live="polite">
@@ -81,7 +110,21 @@ export default function ChatWidget() {
                 {message.content}
               </p>
             ))}
-            {sending && <p className="chat-message chat-message--assistant">thinking…</p>}
+            {messages.length === 1 && !sending && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem' }}>
+                {SUGGESTIONS.map((question) => (
+                  <button
+                    key={question}
+                    type="button"
+                    onClick={() => void sendText(question)}
+                    style={{ border: '1.5px solid #111', background: 'transparent', color: 'inherit', font: 'inherit', fontSize: '0.85rem', padding: '0.3rem 0.7rem', borderRadius: '999px', cursor: 'pointer' }}
+                  >
+                    {question}
+                  </button>
+                ))}
+              </div>
+            )}
+            {sending && <p className="chat-message chat-message--assistant">thinking… this can take a few seconds</p>}
             {unavailable && (
               <p className="chat-error">
                 This assistant runs on a locally-hosted AI model for privacy, so it's offline in this hosted
