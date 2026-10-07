@@ -2,7 +2,7 @@
 
 import { Component, type ErrorInfo, type ReactNode, useEffect, useState } from 'react'
 
-type ChatMessage = { role: 'assistant' | 'user'; content: string }
+type ChatMessage = { role: 'assistant' | 'user'; content: string; guard?: string }
 
 // Starter questions. They only cover facts the assistant actually knows
 // (products, price, the craft), so they do not invite made-up policies.
@@ -13,7 +13,23 @@ const SUGGESTIONS = [
   'Are the shoes hand-painted?',
 ]
 
-async function mockSendMessage(message: string, signal: AbortSignal) {
+// Looks for the name of the guard that fired in the backend's answer.
+// If the backend sends no such field, this returns undefined and nothing extra is shown.
+function readGuard(data: unknown): string | undefined {
+  if (!data || typeof data !== 'object') return undefined
+  const record = data as Record<string, unknown>
+  const candidates = [record.triggered_categories, record.blocked_by, record.guard, record.triggered_guard, record.guards_triggered, record.flags]
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim()) return candidate.trim().replace(/[_-]+/g, ' ')
+    if (Array.isArray(candidate)) {
+      const names = candidate.filter((item): item is string => typeof item === 'string' && item.trim() !== '')
+      if (names.length) return names.join(', ').replace(/[_-]+/g, ' ')
+    }
+  }
+  return undefined
+}
+
+async function sendToBackend(message: string, signal: AbortSignal) {
   const apiUrl = process.env.NEXT_PUBLIC_CHAT_API_URL ?? 'http://localhost:8000'
   const response = await fetch(`${apiUrl}/assistant/chat`, {
     method: 'POST',
@@ -25,7 +41,13 @@ async function mockSendMessage(message: string, signal: AbortSignal) {
     throw new Error(`Backend returned ${response.status}`)
   }
   const data = await response.json()
-  return data.reply as string
+  return { reply: data.reply as string, guard: readGuard(data) }
+}
+
+// Kept with the same name and the same return value (just the reply text) as before.
+async function mockSendMessage(message: string, signal: AbortSignal) {
+  const result = await sendToBackend(message, signal)
+  return result.reply
 }
 
 export class ChatWidgetErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
@@ -64,8 +86,8 @@ export default function ChatWidget() {
     // Local model replies can take 6-20 seconds, so allow up to 60 seconds.
     const timeout = window.setTimeout(() => controller.abort(), 60000)
     try {
-      const response = await mockSendMessage(trimmed, controller.signal)
-      setMessages((current) => [...current, { role: 'assistant', content: response }])
+      const result = await sendToBackend(trimmed, controller.signal)
+      setMessages((current) => [...current, { role: 'assistant', content: result.reply, guard: result.guard }])
     } catch {
       setUnavailable(true)
     } finally {
@@ -106,9 +128,14 @@ export default function ChatWidget() {
           </div>
           <div className="chat-panel__messages">
             {messages.map((message, index) => (
-              <p key={`${message.role}-${index}`} className={`chat-message chat-message--${message.role}`}>
-                {message.content}
-              </p>
+              <div key={`${message.role}-${index}`} style={{ display: 'flex', flexDirection: 'column', alignItems: message.role === 'user' ? 'flex-end' : 'flex-start', gap: '4px' }}>
+                <p className={`chat-message chat-message--${message.role}`}>{message.content}</p>
+                {message.guard && (
+                  <span style={{ fontSize: '0.72rem', fontWeight: 700, border: '1.5px solid #111', borderRadius: '999px', padding: '1px 8px', background: '#ffd400' }}>
+                    Guard triggered: {message.guard}
+                  </span>
+                )}
+              </div>
             ))}
             {messages.length === 1 && !sending && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem' }}>
