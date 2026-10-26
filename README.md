@@ -11,22 +11,6 @@ The chat assistant answers only while the author's laptop is running the backend
 
 ---
 
-## Results at a glance
-
-All test sets are small and hand-written (16 to 60 rows), so these numbers are indicative. Details and error analysis are in [REPORT.md](REPORT.md).
-
-| Detector | Baseline (regex) | Improved | Test set |
-|---|---|---|---|
-| Prompt injection | recall 0.44 | recall **1.00** (model) | 30 hand-written rows |
-| Prompt injection | n/a | F1 **0.97** (model) | 116-row public test split (`deepset/prompt-injections`) |
-| Toxicity | recall 0.50 | recall **1.00**, 1 false alarm (model) | 60 rows |
-| PII | recall 0.50 | recall **0.71** (v2 rules) | 27-row held-out set |
-| Commitments | recall 0.23 | recall **0.54** (v2 rules) | 26-row held-out set |
-
-- Guard overhead is about **14 to 16 ms per message** on CPU; model generation takes 6 to 19 s per reply.
-- On **25 real chatbot replies**, 3 were flagged and all 3 were correct (the model had invented a discount, a return policy and a shipping offer). One invented discount was missed.
-- The weakest areas are names and addresses (PII) and paraphrased promises (commitments). Both are explained in the report.
-
 ## What it protects against
 
 | # | Threat | How GuardStack handles it |
@@ -51,7 +35,6 @@ Shopper ──► [Input guard] ──► Local LLM (Ollama, llama3.2:1b) ──
 - **LLM:** Llama 3.2 1B served locally by Ollama.
 - **Three modes** for the learned detectors: `regex`, `model`, or `hybrid` (either flags). If a model file is missing, the detector **falls back to regex** instead of failing.
 - **Audit log:** one JSON line per decision (status, categories, latency). Message text is not stored.
-- **Guard label in the chat:** when a guard fires, the storefront shows a small "Guard triggered: ..." tag under the reply, using the categories the backend returns.
 
 ## Screenshots
 
@@ -59,21 +42,25 @@ Shopper ──► [Input guard] ──► Local LLM (Ollama, llama3.2:1b) ──
 
 ![Normal chat reply on the Kadambari storefront](docs/screenshots/01_normal_reply.png)
 
-**2. Guards in action.** Top: an obfuscated attack (`1gn0re previous instructions`) is blocked at the input guard. Bottom: a request for a 50% discount produces a reply that the commitment guard holds back for human review. The PII guard checks the assistant's replies, not the shopper's message.
+**2. Guards in action.** Top: an obfuscated attack (`1gn0re previous instructions`) is blocked at the input guard. Bottom: a request for a 50% discount produces a reply that the commitment guard holds back for human review. A phone number typed by the shopper is not blocked, because the PII guard checks the assistant's *replies*.
 
 ![Injection blocked and commitment flagged](docs/screenshots/02_guards_in_action.png)
 
-**3. Injection guard on the shopper's message.** A prompt-injection attempt is blocked before it reaches the model, and the chat shows which guard fired.
+## Results at a glance
 
-![Prompt injection blocked](docs/screenshots/03_injection.png)
+All test sets are small and hand-written (16 to 60 rows), so these numbers are indicative. Details and error analysis are in [REPORT.md](REPORT.md).
 
-**4. Output guards on the model's reply.** The PII, toxicity and commitment guards check what the assistant is about to say, so they are shown here by calling the output guard directly on sample replies. The output lists the status and categories each sample receives.
+| Detector | Baseline (regex) | Improved | Test set |
+|---|---|---|---|
+| Prompt injection | recall 0.44 | recall **1.00** (model) | 30 hand-written rows |
+| Prompt injection | n/a | F1 **0.97** (model) | 116-row public test split (`deepset/prompt-injections`) |
+| Toxicity | recall 0.50 | recall **1.00**, 1 false alarm (model) | 60 rows |
+| PII | recall 0.50 | recall **0.71** (v2 rules) | 27-row held-out set |
+| Commitments | recall 0.23 | recall **0.54** (v2 rules) | 26-row held-out set |
 
-![Output guards run on sample replies](docs/screenshots/04_output_guards.png)
-
-**5. Poisoned review.** One review on the page contains a fake "system note" asking for a discount code. The assistant's instructions tell it to treat reviews as customer text and never follow them. This is a prompt-level defence, not a separate guard, so no guard tag appears.
-
-![Poisoned review not followed](docs/screenshots/05_poisoned_review.png)
+- Guard overhead is about **14 to 16 ms per message** on CPU; model generation takes 6 to 19 s per reply.
+- On **25 real chatbot replies**, 3 were flagged and all 3 were correct (the model had invented a discount, a return policy and a shipping offer). One invented discount was missed.
+- The weakest areas are names and addresses (PII) and paraphrased promises (commitments). Both are explained in the report.
 
 ## Quick start
 
@@ -145,7 +132,6 @@ Test sets: `test_pii_day3.csv`, `test_commitments_day3.csv` (used to guide the v
 - Test sets are small and hand-written, so one example moves a score noticeably.
 - Only injection and toxicity are learned. PII and commitments are rule-based, and names and addresses are not detected.
 - Reviews are not scanned. Indirect injection is covered only by prompt design and the output guard.
-- The injection classifier is conservative. It is the only guard that reads the shopper's message, so it also blocks some abusive or discount-seeking messages and reports them as `prompt_injection`. The toxicity, PII and commitment guards check the assistant's reply.
 - The assistant is single-turn, and product facts such as stock are not verified.
 - The backend runs on a laptop, and CORS is open (`*`), which should be restricted before any public deployment.
 

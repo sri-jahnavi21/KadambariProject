@@ -1,0 +1,66 @@
+﻿== MACHINE ==
+OS (python): Windows-11-10.0.26200-SP0
+OS: Caption : Microsoft Windows 11 Home Single Language
+Version : 10.0.26200
+CPU: Name                      : 12th Gen Intel(R) Core(TM) i5-1235U
+NumberOfCores             : 10
+NumberOfLogicalProcessors : 12
+RAM (GB): 15.7
+GPU: Intel(R) Iris(R) Xe Graphics
+
+== SOFTWARE ==
+Python: 3.14.4
+fastapi: 0.138.0
+uvicorn: 0.48.0
+pydantic: 2.13.4
+requests: 2.34.2
+python-dotenv: 1.2.2
+onnxruntime: 1.27.0
+onnx: not installed
+transformers: 5.9.0
+tokenizers: 0.22.2
+numpy: 2.4.6
+torch: 2.12.0
+Ollama: ollama version is 0.40.8
+Node: v24.21.0
+npm: (not available: [WinError 2] The system cannot find the file specified)
+Next.js (installed): 16.3.3
+
+== MODEL SETTINGS ==
+ollama show llama3.2:1b:
+Model
+    architecture        llama          
+    parameters          1.2B           
+    context length      131072         
+    embedding length    2048           
+    quantization        Q8_0           
+    template source     go_template    
+
+  Capabilities
+    completion    
+    tools         
+
+  License
+    LLAMA 3.2 COMMUNITY LICENSE AGREEMENT                 
+    Llama 3.2 Version Release Date: September 25, 2024    
+    ...
+.env: OLLAMA_MODEL=llama3.2:1b
+.env: GUARDRAIL_ENABLED=true
+.env: TOXICITY_MODE=model
+.env: INJECTION_DETECTOR=model
+model file: models\guardstack_injection.onnx  284 MB
+model file: models\tokenizer.json  8 MB
+model file: models\tokenizer_config.json  0 MB
+model file: models\guardstack_onnx\guardstack_injection.onnx  568 MB
+model file: models\guardstack_onnx\tokenizer.json  8 MB
+model file: models\guardstack_onnx\tokenizer_config.json  0 MB
+model file: models\guardstack_toxicity_onnx\config.json  0 MB
+model file: models\guardstack_toxicity_onnx\guardstack_toxicity.onnx  438 MB
+model file: models\guardstack_toxicity_onnx\tokenizer.json  1 MB
+model file: models\guardstack_toxicity_onnx\tokenizer_config.json  0 MB
+
+== GIT ==
+branch: main
+HEAD: 98c74eb
+v1-submitted tag: 09ae9bd
+uncommitted/untracked entries: 5

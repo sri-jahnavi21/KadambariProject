@@ -1,0 +1,8 @@
+﻿[classifier] loaded guardstack_injection.onnx
+[classifier] loaded guardstack_toxicity.onnx
+(all times in ms)                           n    median      mean       SD       p95      min       max
+Input guard                               250      36.3      39.9     19.9      75.1     11.8      97.6
+Output guards (ALLOWed replies)           220     113.0     123.9     80.2     276.4     20.3     346.7
+End-to-end request (1 run)                 25    7300.0    9792.0   4174.3   18500.0   5800.0   19400.0
+Model generation (end-to-end minus guards)   25    7136.2    9628.2   4174.3   18336.2   5636.2   19236.2
+Modes in effect: model / model
